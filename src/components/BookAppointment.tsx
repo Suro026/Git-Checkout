@@ -68,6 +68,8 @@ export const BookAppointment = ({ onSuccess }: BookAppointmentProps) => {
   };
 
   const fetchDoctors = async (clinicId: string) => {
+    console.log('Fetching doctors for clinic:', clinicId);
+    
     const { data, error } = await supabase
       .from('doctors')
       .select(`
@@ -78,12 +80,18 @@ export const BookAppointment = ({ onSuccess }: BookAppointmentProps) => {
       .eq('clinic_id', clinicId)
       .eq('available', true);
     
+    console.log('Doctors query result:', { data, error });
+    
     if (!error && data) {
-      setDoctors(data.map(d => ({
+      const doctorsList = data.map(d => ({
         id: d.id,
         name: d.name,
         specialty: (d.specialties as any)?.name || 'General'
-      })));
+      }));
+      setDoctors(doctorsList);
+      console.log('Doctors set:', doctorsList.length, 'doctors');
+    } else if (error) {
+      console.error('Error fetching doctors:', error);
     }
   };
 
@@ -182,11 +190,15 @@ export const BookAppointment = ({ onSuccess }: BookAppointmentProps) => {
                   <SelectValue placeholder="Choose a doctor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {doctors.map((doctor) => (
-                    <SelectItem key={doctor.id} value={doctor.id}>
-                      {doctor.name} - {doctor.specialty}
-                    </SelectItem>
-                  ))}
+                  {doctors.length === 0 ? (
+                    <div className="p-2 text-sm text-muted-foreground">No doctors available for this clinic</div>
+                  ) : (
+                    doctors.map((doctor) => (
+                      <SelectItem key={doctor.id} value={doctor.id}>
+                        Dr. {doctor.name} - {doctor.specialty}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
