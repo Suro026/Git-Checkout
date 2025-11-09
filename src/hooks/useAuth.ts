@@ -15,12 +15,19 @@ export const useAuth = () => {
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        setLoading(false); // Always set loading to false when auth state changes
         
         if (session?.user) {
-          // Defer role fetching
+          // Defer role fetching with error handling
           setTimeout(async () => {
-            const userRole = await getUserRole(session.user.id);
-            setRole(userRole);
+            try {
+              const userRole = await getUserRole(session.user.id);
+              setRole(userRole);
+            } catch (error) {
+              console.error('Failed to fetch user role:', error);
+              // Set a default role if fetch fails
+              setRole('patient');
+            }
           }, 0);
         } else {
           setRole(null);
@@ -29,12 +36,19 @@ export const useAuth = () => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        getUserRole(session.user.id).then(setRole);
+        try {
+          const userRole = await getUserRole(session.user.id);
+          setRole(userRole);
+        } catch (error) {
+          console.error('Failed to fetch user role:', error);
+          // Set a default role if fetch fails
+          setRole('patient');
+        }
       }
       setLoading(false);
     });
@@ -42,5 +56,43 @@ export const useAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  return { user, session, role, loading };
+  const signOut = async () => {
+    try {
+      // Check if there's an active session first
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      
+      if (!currentSession) {
+        // No active session, just clear local state
+        setSession(null);
+        setUser(null);
+        setRole(null);
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) {
+        console.error('Error signing out:', error);
+        // If it's a session missing error, just clear local state
+        if (error.message?.includes('Auth session missing')) {
+          setSession(null);
+          setUser(null);
+          setRole(null);
+          return;
+        }
+        throw error;
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // If it's a session missing error, just clear local state and don't throw
+      if (error instanceof Error && error.message?.includes('Auth session missing')) {
+        setSession(null);
+        setUser(null);
+        setRole(null);
+        return;
+      }
+      throw error;
+    }
+  };
+
+  return { user, session, role, loading, signOut };
 };

@@ -39,12 +39,17 @@ const Login = () => {
       
       if (error) {
         toast.error(error.message);
+        setLoading(false);
       } else {
         toast.success("Login successful!");
+        // Wait a bit for auth state to update, then redirect
+        setTimeout(() => {
+          // Force redirect to patient dashboard as default
+          navigate('/dashboard/patient');
+        }, 1000);
       }
     } catch (err: any) {
       toast.error("Invalid email or password");
-    } finally {
       setLoading(false);
     }
   };

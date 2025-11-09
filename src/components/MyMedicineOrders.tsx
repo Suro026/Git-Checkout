@@ -139,9 +139,10 @@ export const MyMedicineOrders = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Package className="w-4 h-4 mr-2" />
-          My Orders
+        <Button variant="outline" size="sm" className="text-xs px-3 py-2 w-full sm:w-auto">
+          <Package className="w-3 h-3 mr-1" />
+          <span className="hidden sm:inline">My Orders</span>
+          <span className="sm:hidden">Orders</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

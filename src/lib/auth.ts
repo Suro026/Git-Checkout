@@ -52,17 +52,31 @@ export const signIn = async (data: LoginData) => {
 };
 
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut({ scope: 'local' });
   return { error };
 };
 
 export const getUserRole = async (userId: string): Promise<'patient' | 'pharmacy' | 'clinic' | null> => {
-  const { data, error } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', userId)
-    .single();
-  
-  if (error || !data) return null;
-  return data.role as 'patient' | 'pharmacy' | 'clinic';
+  try {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Error fetching user role:', error);
+      return null;
+    }
+    
+    if (!data) {
+      console.warn('No role found for user:', userId);
+      return null;
+    }
+    
+    return data.role as 'patient' | 'pharmacy' | 'clinic';
+  } catch (err) {
+    console.error('Exception fetching user role:', err);
+    return null;
+  }
 };

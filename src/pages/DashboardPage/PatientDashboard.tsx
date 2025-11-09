@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Calendar, Search, Activity, Clock, MapPin, FileText } from "lucide-react";
+import { Calendar, Search, Activity, Clock, MapPin, FileText, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { signOut } from "@/lib/auth";
+
 import { toast } from "sonner";
 import { BookAppointment } from "@/components/BookAppointment";
 import { OrderMedicine } from "@/components/OrderMedicine";
 import { HealthMemory } from "@/components/HealthMemory";
 import { MyMedicineOrders } from "@/components/MyMedicineOrders";
+import { AIChatbot } from "@/components/AIChatbot";
+import { HealthCommunity } from "@/components/HealthCommunity";
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Appointment {
@@ -51,7 +54,7 @@ interface Clinic {
 }
 
 const PatientDashboard = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
@@ -60,6 +63,7 @@ const PatientDashboard = () => {
   const [specialtyFilter, setSpecialtyFilter] = useState("all");
   const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([]);
   const [patientName, setPatientName] = useState<string>("Patient");
+  const [showCommunity, setShowCommunity] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -92,6 +96,8 @@ const PatientDashboard = () => {
   };
 
   const fetchAppointments = async () => {
+    if (!user?.id) return;
+    
     const { data, error } = await supabase
       .from('appointments')
       .select(`
@@ -106,11 +112,13 @@ const PatientDashboard = () => {
           specialties (name)
         )
       `)
-      .eq('patient_id', user?.id)
+      .eq('patient_id', user.id)
       .order('appointment_date', { ascending: true })
       .limit(5);
 
-    if (!error && data) {
+    if (error) {
+      console.error('Error fetching appointments:', error);
+    } else if (data) {
       setAppointments(data as any);
     }
   };
@@ -162,15 +170,16 @@ const PatientDashboard = () => {
   };
 
   const handleLogout = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast.error("Failed to logout");
-    } else {
+    try {
+      await signOut();
       toast.success("Logged out successfully");
       // Clear any local state
       setPatientName("Patient");
-      // Navigate to home and force reload to clear auth state
-      window.location.href = '/';
+      // Navigate to home
+      navigate('/');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to logout. Please try again.");
     }
   };
 
@@ -186,6 +195,16 @@ const PatientDashboard = () => {
     
     return matchesSearch && hasSpecialty;
   });
+
+  const scrollToCommunity = () => {
+    setShowCommunity(true);
+    setTimeout(() => {
+      const communitySection = document.getElementById('community-section');
+      if (communitySection) {
+        communitySection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -209,6 +228,8 @@ const PatientDashboard = () => {
           <h2 className="text-3xl font-bold mb-2">Patient Dashboard</h2>
           <p className="text-muted-foreground">Manage your healthcare appointments and records</p>
         </div>
+
+
 
         {/* Search Section */}
         <Card className="mb-8">
@@ -245,7 +266,7 @@ const PatientDashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6 text-center space-y-2">
               <Calendar className="w-10 h-10 mx-auto text-primary" />
@@ -271,10 +292,22 @@ const PatientDashboard = () => {
             <CardContent className="p-6 text-center space-y-2">
               <MapPin className="w-10 h-10 mx-auto text-warning" />
               <h3 className="font-semibold">Order Medicine</h3>
-              <div className="flex gap-2 justify-center">
-                <OrderMedicine />
-                <MyMedicineOrders />
+              <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-center items-center w-full">
+                <div className="w-full sm:w-auto">
+                  <OrderMedicine />
+                </div>
+                <div className="w-full sm:w-auto">
+                  <MyMedicineOrders />
+                </div>
               </div>
+            </CardContent>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer hover:bg-purple-50" onClick={scrollToCommunity}>
+            <CardContent className="p-6 text-center space-y-2">
+              <Users className="w-10 h-10 mx-auto text-purple-600" />
+              <h3 className="font-semibold">Community</h3>
+              <p className="text-sm text-muted-foreground">Connect & Share</p>
+              <div className="text-xs text-purple-600 font-medium">Click to explore →</div>
             </CardContent>
           </Card>
         </div>
@@ -361,7 +394,7 @@ const PatientDashboard = () => {
         </div>
 
         {/* Nearby Pharmacies */}
-        <Card>
+        <Card className="mb-8">
           <CardHeader>
             <CardTitle>Nearby Pharmacies</CardTitle>
           </CardHeader>
@@ -386,7 +419,25 @@ const PatientDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Health Community */}
+        {showCommunity && (
+          <Card id="community-section" className="animate-in slide-in-from-bottom-4 duration-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Health Community
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HealthCommunity />
+            </CardContent>
+          </Card>
+        )}
       </main>
+
+      {/* AI Chatbot */}
+      <AIChatbot />
     </div>
   );
 };

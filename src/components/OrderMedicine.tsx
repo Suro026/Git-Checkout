@@ -122,9 +122,10 @@ export const OrderMedicine = ({ onSuccess }: OrderMedicineProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Package className="w-4 h-4 mr-2" />
-          Order Medicine
+        <Button size="sm" className="text-xs px-3 py-2 w-full sm:w-auto">
+          <Package className="w-3 h-3 mr-1" />
+          <span className="hidden sm:inline">Order Medicine</span>
+          <span className="sm:hidden">Order</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">

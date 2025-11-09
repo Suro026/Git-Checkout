@@ -6,7 +6,7 @@ import { Activity, Package, AlertCircle, Upload, Calendar, TrendingDown } from "
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { signOut } from "@/lib/auth";
+
 import { toast } from "sonner";
 import { BillGenerator } from "@/components/BillGenerator";
 import { StockManagement } from "@/components/StockManagement";
@@ -28,7 +28,7 @@ interface MedicineOrder {
 }
 
 const PharmacyDashboard = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [pharmacyName, setPharmacyName] = useState<string>("Pharmacy");
   const [pharmacyId, setPharmacyId] = useState<string | null>(null);
@@ -155,13 +155,14 @@ const PharmacyDashboard = () => {
   };
 
   const handleLogout = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast.error("Failed to logout");
-    } else {
+    try {
+      await signOut();
       toast.success("Logged out successfully");
       setPharmacyName("Pharmacy");
-      window.location.href = '/';
+      navigate('/');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to logout. Please try again.");
     }
   };
 

@@ -6,7 +6,7 @@ import { Activity, Users, Calendar, AlertTriangle, Clock, TrendingUp } from "luc
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { signOut } from "@/lib/auth";
+
 import { toast } from "sonner";
 import { DoctorManagement } from "@/components/DoctorManagement";
 
@@ -28,7 +28,7 @@ interface Appointment {
 }
 
 const ClinicDashboard = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [clinicName, setClinicName] = useState<string>("Clinic");
   const [clinicId, setClinicId] = useState<string | null>(null);
@@ -71,7 +71,8 @@ const ClinicDashboard = () => {
   const fetchAppointments = async () => {
     if (!clinicId) return;
 
-    const { data, error } = await supabase
+    // First get appointments
+    const { data: appointmentsData, error: appointmentsError } = await supabase
       .from('appointments')
       .select(`
         id,
@@ -79,7 +80,8 @@ const ClinicDashboard = () => {
         appointment_time,
         status,
         notes,
-        profiles!appointments_patient_id_fkey (full_name),
+        patient_id,
+        doctor_id,
         doctors (
           name,
           specialties (name)
@@ -89,26 +91,58 @@ const ClinicDashboard = () => {
       .order('appointment_date', { ascending: true })
       .order('appointment_time', { ascending: true });
 
-    if (!error && data) {
-      setAppointments(data as any);
-      
-      // Count today's appointments
-      const today = new Date().toISOString().split('T')[0];
-      const todayCount = data.filter(apt => apt.appointment_date === today).length;
-      setTodayAppointments(todayCount);
-    } else if (error) {
-      console.error('Error fetching appointments:', error);
+    if (appointmentsError) {
+      console.error('Error fetching appointments:', appointmentsError);
+      return;
     }
+
+    if (!appointmentsData || appointmentsData.length === 0) {
+      setAppointments([]);
+      setTodayAppointments(0);
+      return;
+    }
+
+    // Get patient names separately
+    const patientIds = [...new Set(appointmentsData.map(apt => apt.patient_id))];
+    console.log('Patient IDs:', patientIds);
+    
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, full_name')
+      .in('id', patientIds);
+
+    console.log('Profiles data:', profilesData);
+    console.log('Profiles error:', profilesError);
+
+    // Combine the data
+    const appointmentsWithProfiles = appointmentsData.map(apt => {
+      const profile = profilesData?.find(p => p.id === apt.patient_id);
+      console.log(`Appointment ${apt.id} - Patient ID: ${apt.patient_id}, Profile found:`, profile);
+      return {
+        ...apt,
+        profiles: {
+          full_name: profile?.full_name || 'Unknown Patient'
+        }
+      };
+    });
+
+    setAppointments(appointmentsWithProfiles as any);
+    
+    // Count today's appointments
+    const today = new Date().toISOString().split('T')[0];
+    const todayCount = appointmentsWithProfiles.filter(apt => apt.appointment_date === today).length;
+    setTodayAppointments(todayCount);
   };
 
   const handleLogout = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast.error("Failed to logout");
-    } else {
+    try {
+      await signOut();
       toast.success("Logged out successfully");
       setClinicName("Clinic");
-      window.location.href = '/';
+      navigate('/');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to logout. Please try again.");
     }
   };
 
@@ -152,6 +186,8 @@ const ClinicDashboard = () => {
           <h2 className="text-3xl font-bold mb-2">Clinic Dashboard</h2>
           <p className="text-muted-foreground">Monitor operations and manage healthcare services</p>
         </div>
+
+
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
