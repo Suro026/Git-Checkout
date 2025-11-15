@@ -2,9 +2,42 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, X, Calendar, MapPin, Pill, Building2, ChevronRight, Home } from "lucide-react";
+import { MessageCircle, X, Calendar, MapPin, Pill, Building2, ChevronRight, Home, Languages } from "lucide-react";
 import { BookAppointment } from "./BookAppointment";
 import { OrderMedicine } from "./OrderMedicine";
+
+const translations = {
+  en: {
+    title: "Kllinic's Smart Bot",
+    greeting: "Hi! I'm Kllinic's Smart Bot. How can I help you today?",
+    viewAppointments: "View My Appointments",
+    findClinics: "Find Clinics",
+    findPharmacies: "Find Pharmacies",
+    quickActions: "Quick Actions",
+    yourAppointments: "Your Appointments",
+    availableClinics: "Available Clinics",
+    nearbyPharmacies: "Nearby Pharmacies",
+    backToMenu: "Back to Menu",
+    noAppointments: "No appointments yet",
+    noClinics: "No clinics found",
+    noPharmacies: "No pharmacies found",
+  },
+  hi: {
+    title: "क्लिनिक का स्मार्ट बॉट",
+    greeting: "नमस्ते! मैं क्लिनिक का स्मार्ट बॉट हूं। मैं आपकी कैसे मदद कर सकता हूं?",
+    viewAppointments: "मेरी अपॉइंटमेंट देखें",
+    findClinics: "क्लिनिक खोजें",
+    findPharmacies: "फार्मेसी खोजें",
+    quickActions: "त्वरित कार्य",
+    yourAppointments: "आपकी अपॉइंटमेंट",
+    availableClinics: "उपलब्ध क्लिनिक",
+    nearbyPharmacies: "नजदीकी फार्मेसी",
+    backToMenu: "मेनू पर वापस जाएं",
+    noAppointments: "अभी तक कोई अपॉइंटमेंट नहीं",
+    noClinics: "कोई क्लिनिक नहीं मिला",
+    noPharmacies: "कोई फार्मेसी नहीं मिली",
+  }
+};
 
 interface QuickAssistantProps {
   appointments?: any[];
@@ -21,6 +54,9 @@ export const QuickAssistant = ({
 }: QuickAssistantProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'menu' | 'appointments' | 'clinics' | 'pharmacies'>('menu');
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  const t = translations[language];
 
   const handleClose = () => {
     setIsOpen(false);
@@ -34,7 +70,7 @@ export const QuickAssistant = ({
   const renderMenu = () => (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground mb-4">
-        Hi! I'm Kllinic's Smart Bot. How can I help you today?
+        {t.greeting}
       </p>
       
       <Button
@@ -43,7 +79,7 @@ export const QuickAssistant = ({
         onClick={() => setCurrentView('appointments')}
       >
         <Calendar className="w-4 h-4 mr-2" />
-        View My Appointments
+        {t.viewAppointments}
         <Badge className="ml-auto">{appointments.length}</Badge>
       </Button>
 
@@ -53,7 +89,7 @@ export const QuickAssistant = ({
         onClick={() => setCurrentView('clinics')}
       >
         <Building2 className="w-4 h-4 mr-2" />
-        Find Clinics
+        {t.findClinics}
         <Badge className="ml-auto">{clinics.length}</Badge>
       </Button>
 
@@ -63,12 +99,12 @@ export const QuickAssistant = ({
         onClick={() => setCurrentView('pharmacies')}
       >
         <MapPin className="w-4 h-4 mr-2" />
-        Find Pharmacies
+        {t.findPharmacies}
         <Badge className="ml-auto">{pharmacies.length}</Badge>
       </Button>
 
       <div className="pt-2 border-t">
-        <p className="text-xs text-muted-foreground mb-2">Quick Actions</p>
+        <p className="text-xs text-muted-foreground mb-2">{t.quickActions}</p>
         <div className="flex gap-2">
           <BookAppointment onSuccess={onRefresh} />
           <OrderMedicine />
@@ -80,15 +116,15 @@ export const QuickAssistant = ({
   const renderAppointments = () => (
     <div className="space-y-3">
       <Button variant="ghost" size="sm" onClick={handleBack} className="mb-2">
-        ← Back to Menu
+        ← {t.backToMenu}
       </Button>
       
-      <h3 className="font-semibold">Your Appointments</h3>
+      <h3 className="font-semibold">{t.yourAppointments}</h3>
       
       {appointments.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-          <p>No appointments yet</p>
+          <p>{t.noAppointments}</p>
           <BookAppointment onSuccess={onRefresh} />
         </div>
       ) : (
@@ -124,13 +160,13 @@ export const QuickAssistant = ({
   const renderClinics = () => (
     <div className="space-y-3">
       <Button variant="ghost" size="sm" onClick={handleBack} className="mb-2">
-        ← Back to Menu
+        ← {t.backToMenu}
       </Button>
       
-      <h3 className="font-semibold">Available Clinics</h3>
+      <h3 className="font-semibold">{t.availableClinics}</h3>
       
       {clinics.length === 0 ? (
-        <p className="text-center py-8 text-muted-foreground">No clinics found</p>
+        <p className="text-center py-8 text-muted-foreground">{t.noClinics}</p>
       ) : (
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {clinics.slice(0, 5).map((clinic) => (
@@ -157,13 +193,13 @@ export const QuickAssistant = ({
   const renderPharmacies = () => (
     <div className="space-y-3">
       <Button variant="ghost" size="sm" onClick={handleBack} className="mb-2">
-        ← Back to Menu
+        ← {t.backToMenu}
       </Button>
       
-      <h3 className="font-semibold">Nearby Pharmacies</h3>
+      <h3 className="font-semibold">{t.nearbyPharmacies}</h3>
       
       {pharmacies.length === 0 ? (
-        <p className="text-center py-8 text-muted-foreground">No pharmacies found</p>
+        <p className="text-center py-8 text-muted-foreground">{t.noPharmacies}</p>
       ) : (
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {pharmacies.slice(0, 5).map((pharmacy) => (
@@ -209,11 +245,22 @@ export const QuickAssistant = ({
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-primary" />
                   </div>
-                  <CardTitle className="text-lg">Kllinic's Smart Bot</CardTitle>
+                  <CardTitle className="text-lg">{t.title}</CardTitle>
                 </div>
-                <Button variant="ghost" size="sm" onClick={handleClose}>
-                  <X className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+                    className="text-xs"
+                  >
+                    <Languages className="w-4 h-4 mr-1" />
+                    {language === 'en' ? 'हिं' : 'EN'}
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={handleClose}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto">
