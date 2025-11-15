@@ -34,7 +34,7 @@ export const QuickAssistant = ({
   const renderMenu = () => (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground mb-4">
-        Hi! I'm your Quick Assistant. How can I help you today?
+        Hi! I'm Kllinic's Smart Bot. How can I help you today?
       </p>
       
       <Button
@@ -209,7 +209,7 @@ export const QuickAssistant = ({
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-primary" />
                   </div>
-                  <CardTitle className="text-lg">Quick Assistant</CardTitle>
+                  <CardTitle className="text-lg">Kllinic's Smart Bot</CardTitle>
                 </div>
                 <Button variant="ghost" size="sm" onClick={handleClose}>
                   <X className="w-4 h-4" />
