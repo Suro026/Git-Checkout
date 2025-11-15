@@ -15,6 +15,7 @@ import { MyMedicineOrders } from "@/components/MyMedicineOrders";
 import { AIChatbot } from "@/components/AIChatbot";
 import { HealthCommunity } from "@/components/HealthCommunity";
 import { QuickAssistant } from "@/components/QuickAssistant";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -217,6 +218,7 @@ const PatientDashboard = () => {
           </div>
           <div className="flex items-center gap-4">
             <span className="text-muted-foreground">Hello, {patientName}</span>
+            <DarkModeToggle />
             <Button variant="outline" onClick={handleLogout}>
               Logout
             </Button>

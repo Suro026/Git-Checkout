@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 import { toast } from "sonner";
 import { DoctorManagement } from "@/components/DoctorManagement";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 interface Appointment {
   id: string;
@@ -174,6 +175,7 @@ const ClinicDashboard = () => {
           <div className="flex items-center gap-4">
             <span className="text-muted-foreground">Hello, {clinicName}</span>
             <DoctorManagement clinicId={clinicId || ""} />
+            <DarkModeToggle />
             <Button variant="outline" onClick={handleLogout}>
               Logout
             </Button>

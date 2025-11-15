@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { BillGenerator } from "@/components/BillGenerator";
 import { StockManagement } from "@/components/StockManagement";
 import { AIStockUpdater } from "@/components/AIStockUpdater";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 interface MedicineOrder {
   id: string;
@@ -191,6 +192,7 @@ const PharmacyDashboard = () => {
                 pharmacyPhone={pharmacyPhone}
               />
             </div>
+            <DarkModeToggle />
             <Button variant="outline" onClick={handleLogout}>
               Logout
             </Button>
