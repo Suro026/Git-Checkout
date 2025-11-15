@@ -14,6 +14,7 @@ import { HealthMemory } from "@/components/HealthMemory";
 import { MyMedicineOrders } from "@/components/MyMedicineOrders";
 import { AIChatbot } from "@/components/AIChatbot";
 import { HealthCommunity } from "@/components/HealthCommunity";
+import { QuickAssistant } from "@/components/QuickAssistant";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -435,6 +436,18 @@ const PatientDashboard = () => {
           </Card>
         )}
       </main>
+
+      {/* Quick Assistant */}
+      <QuickAssistant 
+        appointments={appointments}
+        clinics={clinics}
+        pharmacies={pharmacies}
+        onRefresh={() => {
+          fetchAppointments();
+          fetchClinics();
+          fetchPharmacies();
+        }}
+      />
 
       {/* AI Chatbot */}
       <AIChatbot />
