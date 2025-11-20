@@ -364,23 +364,6 @@ Detailed health timeline that automatically captures data from appointments and 
 3. Make your changes with proper testing
 4. Submit a pull request with detailed description
 
-## 📞 Support & Contact
-
-### Technical Support
-- **Email**: support@kllinic.com
-- **Documentation**: Comprehensive guides and API documentation
-- **Community**: Developer community for discussions and help
-
-### Business Inquiries
-- **Partnerships**: partnerships@kllinic.com
-- **Enterprise**: enterprise@kllinic.com
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
----
-
 ## 🎉 Conclusion
 
 Kllinic represents the future of healthcare technology - a comprehensive, community-driven platform that brings together all stakeholders in the healthcare ecosystem. With its innovative features, robust architecture, and user-centric design, Kllinic is positioned to revolutionize how people access and manage healthcare services.
