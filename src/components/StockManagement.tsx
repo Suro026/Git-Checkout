@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import AIForecastDashboard from "./ai/AIForecastDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Package, Plus, Edit, Trash2, AlertTriangle, Calendar, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -232,12 +233,19 @@ export const StockManagement = ({ pharmacyId }: StockManagementProps) => {
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="all">All Stock ({stockItems.length})</TabsTrigger>
             <TabsTrigger value="low">Low Stock ({stockItems.filter(i => getStockStatus(i) === 'low').length})</TabsTrigger>
             <TabsTrigger value="expiring">Expiring ({stockItems.filter(i => ['expired', 'expiring_soon'].includes(getExpiryStatus(i.expiry_date))).length})</TabsTrigger>
+            <TabsTrigger value="ai">AI Forecast</TabsTrigger>
             <TabsTrigger value="add">{editingItem ? 'Edit' : 'Add'} Stock</TabsTrigger>
           </TabsList>
+          <TabsContent value="ai">
+            <div className="space-y-4">
+              <AIForecastDashboard />
+            </div>
+          </TabsContent>
+
 
           <TabsContent value="all" className="space-y-4">
             <div className="flex gap-4">
