@@ -364,22 +364,16 @@ Detailed health timeline that automatically captures data from appointments and 
 3. Make your changes with proper testing
 4. Submit a pull request with detailed description
 
-## 📞 Support & Contact
+## Support & Contact
 
 ### Technical Support
-- **Email**: support@kllinic.com
-- **Documentation**: Comprehensive guides and API documentation
-- **Community**: Developer community for discussions and help
+- **Email:** support@ldlinic.com
+- **Documentation:** Comprehensive guides and API documentation
+- **Community:** Developer community for discussions and help
 
 ### Business Inquiries
-- **Partnerships**: partnerships@kllinic.com
-- **Enterprise**: enterprise@kllinic.com
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
----
+- **Partnerships:** partnerships@kllinic.com
+- **Enterprise:** enterprise@kilinic.com
 
 ## 🎉 Conclusion
 
