@@ -376,7 +376,6 @@ Detailed health timeline that automatically captures data from appointments and 
 - **Enterprise:** enterprise@kilinic.com
 
 ## 🔮 Future Roadmap
-
 We are moving beyond simple management to build a fully connected **"Open Innovation" ecosystem**. Below are the key modules currently in our development pipeline:
 
 ### 💊 Smart Medicine & Prescription Cabinet
