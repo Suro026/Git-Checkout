@@ -375,6 +375,27 @@ Detailed health timeline that automatically captures data from appointments and 
 - **Partnerships:** partnerships@kllinic.com
 - **Enterprise:** enterprise@kilinic.com
 
+## 🔮 Future Roadmap
+
+We are moving beyond simple management to build a fully connected **"Open Innovation" ecosystem**. Below are the key modules currently in our development pipeline:
+
+### 💊 Smart Medicine & Prescription Cabinet
+A comprehensive tool for personal health management.
+* **Prescription Cabinet:** A secure digital vault where patients can scan and store their entire history of physical prescriptions, creating a lifelong **"Health Memory Graph"**.
+* **Medicine Cabinet (Expiry Alerts):** Patients scan medicine boxes at home. The app tracks expiry dates and sends proactive alerts.
+    > *Example:* "Your cough syrup expires next week. Pre-order a new one now?"
+
+### 🤝 B2B Digital Mart (Inter-Pharmacy Network)
+A peer-to-peer marketplace solving the "out-of-stock" crisis.
+* **The Problem:** Small pharmacies lose sales and patients suffer when urgent stock is unavailable.
+* **The Solution:** An interconnected network where independent pharmacists can source urgent stock from peers nearby.
+    * *Scenario:* If Pharmacy A is out of a rare drug, they can instantly source it from Pharmacy B (2km away) to fulfill the patient's order.
+
+### 🧠 Inter-Clinic "Health Passport"
+Solving fragmented patient data through interoperability.
+* **Concept:** A shared, patient-consented medical record system.
+* **Utility:** Allows a doctor at **Clinic A** to securely view treatment history from **Clinic B**, ensuring continuity of care and better diagnostic accuracy.
+
 ## 🎉 Conclusion
 
 Kllinic represents the future of healthcare technology - a comprehensive, community-driven platform that brings together all stakeholders in the healthcare ecosystem. With its innovative features, robust architecture, and user-centric design, Kllinic is positioned to revolutionize how people access and manage healthcare services.
